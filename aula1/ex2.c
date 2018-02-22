@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct contato contato;
 struct contato{
@@ -37,10 +38,31 @@ int main() {
       qtd++;
     }
     else if (o == 2){
-
+      int check = 0;
+      char nome[51];
+      printf("Digite o nome: ");
+      scanf("%s", &nome);
+      for(int i=0;i<qtd;i++){
+        if(!strcmp(agenda[i].nome, nome)){
+          printf("Nome: %s\nTelefone: %s\nE-mail: %s\n", agenda[i].nome, agenda[i].tel, agenda[i].email);
+          i=qtd;
+          check=1;
+        }
+      }
+      if(!check){
+        printf("Contato nao encontrado.\n");
+      }
     }
     else if (o == 3){
-
+      char tel[11];
+      printf("Digite o telefone: ");
+      scanf("%s", &tel);
+      for(int i=0;i<qtd;i++){
+        if(!strcmp(agenda[i].tel, tel)){
+          printf("Nome: %s\nTelefone: %s\nE-mail: %s\n", agenda[i].nome, agenda[i].tel, agenda[i].email);
+          i=qtd;
+        }
+      }
     }
     else {
       printf("%-50s%-10s%s\n", "Nome", "Telefone", "E-mail");
