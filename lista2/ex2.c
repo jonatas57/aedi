@@ -34,6 +34,7 @@ char * ccat(char *s, char *t){
   return u;
 }
 //5
+//6
 
 
 int main() {
