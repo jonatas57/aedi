@@ -42,7 +42,13 @@ void concatList(no *list1, no *list2){
 }
 //3)
 void invertList(no** ini){
-
+  no *tmp = *ini, *first = *ini;
+  while(tmp!=NULL&&*ini!=NULL&&tmp->next!=NULL){
+    *ini = tmp->next;
+    tmp->next = tmp->next->next;
+    (*ini)->next = first;
+    first = *ini;
+  }
 }
 //4)
 no* divideList(no* list){
@@ -85,15 +91,7 @@ void removeNode(no** ini, int p) {
 }
 
 
-int main(int argc, char const *argv[]) {
-  no *list = NULL, *list2 = NULL;
-  for(int i=1;i<=9;i++){
-    insertNode(&list, novo(i), i-1);
-  }
-  printf("lista: ");
-  printList(list);
-  removeNode(&list, 5);
-  printf("lista 2: ");
-  printList(list);
+int main() {
+
   return 0;
 }
