@@ -66,13 +66,16 @@ void insertNode(mat *M, int data, int x, int y) {
     }
     else if (aux->ind == n->pos[a]){
       node *aux2;
-      for (aux2 = aux->node;aux2 != NULL && aux2->next[a] != NULL && aux2->next[a]->pos[(a + 1)%2] < n->pos[(a + 1)%2];aux2 = aux2->next[a]);
-      if (aux2 == NULL){
+      for (aux2 = aux->node;aux2->pos[(a + 1) % 2] < n->pos[(a + 1)%2] && aux2->next[a] != NULL && aux2->next[a]->pos[(a + 1)%2] < n->pos[(a + 1)%2];aux2 = aux2->next[a]);
+      if (aux2->next[a] == NULL){
         aux2->next[a] = n;
         n->next[a] = NULL;
       }
-      else if (aux2->pos[(a + 1)%2] == n->pos[(a + 1)%2]) {
-        aux2->data = data;
+      else if (aux2->pos[(a + 1) % 2] < n->pos[(a + 1)%2]) {
+        /* code */
+      }
+      else if (aux2->next[a]->pos[(a + 1)%2] == n->pos[(a + 1)%2]) {
+        aux2->next[a]->data = data;
         free(n);
       }
       else {
@@ -123,6 +126,33 @@ void printMat(mat *M) {
   }
   printf("\n");
 }
+void printTransp(mat *M) {
+  printf("\n");
+  int x = M->tam[0], y = M->tam[1];
+  head *aux = M->lc[1];
+  node *n = NULL;
+  for (int i = 0;i < y;i++) {
+    int p = 0;
+    if (aux == NULL){
+      p = 1;
+    }
+    else if (i == aux->ind) {
+      n = aux->node;
+      aux = aux->next;
+    }
+    for (int j = 0;j < x;j++) {
+      if (p || n == NULL || j < n->pos[0]){
+        printf("0 ");
+      }
+      else {
+        printf("%d ", n->data);
+        n = n->next[1];
+      }
+    }
+    printf("\n");
+  }
+  printf("\n");
+}
 mat* initMat(int x, int y){
   mat *M = malloc(sizeof(mat));
   if(M != NULL){
@@ -159,8 +189,14 @@ int main() {
       case 2:
       printMat(m);
       break;
+      case 3:
+      printTransp(m);
+      break;
+      case 4:
+      test(m);
+      break;
     }
-    printf("1-inserir, 2-print, 0-sair\n");
+    printf("1-inserir, 2-print, 3-print transposta, 4-teste, 0-sair\n");
     scanf("%d", &p);
   }
   return 0;
