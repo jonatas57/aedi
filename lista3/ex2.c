@@ -48,25 +48,18 @@ void insertNode(mat *M, int data, int x, int y) {
   n->next[0] = NULL;
   n->next[1] = NULL;
   for (int a = 0;a < 2;a++){
-    head *aux;
-    for (aux = M->lc[a];aux != NULL && aux->ind < n->pos[a] && aux->next != NULL && aux->next->ind <= n->pos[a];aux = aux->next);
-    if (aux == NULL) {
+    head **aux = &M->lc[a];
+    for (;*aux != NULL && (*aux)->ind < n->pos[a] && (*aux)->next != NULL && (*aux)->next->ind <= n->pos[a];aux = ((*aux)->next));
+    if (*aux == NULL || (*aux)->ind > n->pos[a]){
       head *h = malloc(sizeof(head));
       h->ind = n->pos[a];
       h->node = n;
-      h->next = NULL;
-      M->lc[a] = h;
-    }//////
-    else if (aux->ind > n->pos[a]){
-      head *h = malloc(sizeof(head));
-      h->ind = n->pos[a];
-      h->node = n;
-      h->next = M->lc[a];
-      M->lc[a] = h;
+      h->next = *aux;
+      *aux = h;
     }
-    else if (aux->ind == n->pos[a]){
+    else if ((*aux)->ind == n->pos[a]){
       node *aux2;
-      for (aux2 = aux->node;aux2->pos[(a + 1) % 2] < n->pos[(a + 1)%2] && aux2->next[a] != NULL && aux2->next[a]->pos[(a + 1)%2] < n->pos[(a + 1)%2];aux2 = aux2->next[a]);
+      for (aux2 = (*aux)->node;aux2->pos[(a + 1) % 2] < n->pos[(a + 1)%2] && aux2->next[a] != NULL && aux2->next[a]->pos[(a + 1)%2] < n->pos[(a + 1)%2];aux2 = aux2->next[a]);
       if (aux2->next[a] == NULL){
         aux2->next[a] = n;
         n->next[a] = NULL;
@@ -83,19 +76,19 @@ void insertNode(mat *M, int data, int x, int y) {
         aux2->next[a] = n;
       }
     }
-    else if (aux->next == NULL){
+    else if ((*aux)->next == NULL){
       head *h = malloc(sizeof(head));
       h->ind = n->pos[a];
       h->node = n;
       h->next = NULL;
-      aux->next = h;
+      (*aux)->next = h;
     }
     else {
       head *h = malloc(sizeof(head));
       h->ind = n->pos[a];
       h->node = n;
-      h->next = aux->next;
-      aux->next = h->next;
+      h->next = (*aux)->next;
+      (*aux)->next = h->next;
     }
   }
 }
