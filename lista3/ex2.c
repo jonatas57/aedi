@@ -49,46 +49,35 @@ void insertNode(mat *M, int data, int x, int y) {
   n->next[1] = NULL;
   for (int a = 0;a < 2;a++){
     head **aux = &M->lc[a];
-    for (;*aux != NULL && (*aux)->ind < n->pos[a] && (*aux)->next != NULL && (*aux)->next->ind <= n->pos[a];aux = ((*aux)->next));
-    if (*aux == NULL || (*aux)->ind > n->pos[a]){
+    for (;*aux != NULL && (*aux)->ind < n->pos[a] && (*aux)->next != NULL;aux = &(*aux)->next);
+    if (*aux == NULL || (*aux)->ind > n->pos[a]) {
       head *h = malloc(sizeof(head));
       h->ind = n->pos[a];
       h->node = n;
       h->next = *aux;
       *aux = h;
     }
-    else if ((*aux)->ind == n->pos[a]){
-      node *aux2;
-      for (aux2 = (*aux)->node;aux2->pos[(a + 1) % 2] < n->pos[(a + 1)%2] && aux2->next[a] != NULL && aux2->next[a]->pos[(a + 1)%2] < n->pos[(a + 1)%2];aux2 = aux2->next[a]);
-      if (aux2->next[a] == NULL){
-        aux2->next[a] = n;
-        n->next[a] = NULL;
-      }
-      else if (aux2->pos[(a + 1) % 2] < n->pos[(a + 1)%2]) {
-        /* code */
-      }
-      else if (aux2->next[a]->pos[(a + 1)%2] == n->pos[(a + 1)%2]) {
-        aux2->next[a]->data = data;
+    else if ((*aux)->ind == n->pos[a]) {
+      node **aux2 = &(*aux)->node;
+      for (;(*aux2)->pos[(a + 1) % 2] < n->pos[(a + 1) % 2] && (*aux2)->next[a] != NULL;aux2 = &(*aux2)->next[a]);
+      if ((*aux2)->pos[(a + 1) % 2] == n->pos[(a + 1) % 2]){
+        (*aux2)->data = data;
         free(n);
       }
-      else {
-        n->next[a] = aux2->next[a];
-        aux2->next[a] = n;
+      else if ((*aux2)->pos[(a + 1) % 2] > n->pos[(a + 1) % 2]) {
+        n->next[a] = *aux2;
+        *aux2 = n;
       }
-    }
-    else if ((*aux)->next == NULL){
-      head *h = malloc(sizeof(head));
-      h->ind = n->pos[a];
-      h->node = n;
-      h->next = NULL;
-      (*aux)->next = h;
+      else {
+        (*aux2)->next[a] = n;
+      }
     }
     else {
       head *h = malloc(sizeof(head));
       h->ind = n->pos[a];
       h->node = n;
       h->next = (*aux)->next;
-      (*aux)->next = h->next;
+      (*aux)->next = h;
     }
   }
 }
