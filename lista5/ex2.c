@@ -73,18 +73,17 @@ int main(){
   }
   initFila(&hex);
   int aux = 0;
-  for (int i = 4 - (n.tam % 4);n.top != NULL;i = (i + 1) % 4) {
+  for (int i = (4 - (n.tam % 4)) % 4;n.top != NULL;i = (i + 1) % 4) {
     int j = dequeue(&n);
-    aux += j * (pow(2, (3 - 1)));
+    aux += (j - '0') * (pow(2, (3 - i)));
     if (i == 3) {
       enqueue(&hex, newNode((aux >= '0' && aux <= '9') ? (aux + '0') : (aux + 'a' - 10)));
-      printQueue(hex);
+      aux = 0;
     }
   }
   queue lin[3];
   initFila(&lin[0]);initFila(&lin[1]);initFila(&lin[2]);
   char std[10]={" _ |_||_|"};
-  printQueue(hex);
   while (hex.top != NULL) {
     char s = dequeue(&hex);
     if(s >= '0' && s <= '9'){
