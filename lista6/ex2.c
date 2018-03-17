@@ -47,28 +47,6 @@ void insertNode(TreeNode **t, TreeNode *x) {
     free(x);
   }
 }
-TreeNode* searchTree(TreeNode *t, key k) {
-  if (t == NULL){
-    return t;
-  }
-  if (t->k > k) {
-    return searchTree(t->pLeft, k);
-  }
-  else if (t->k < k) {
-    return searchTree(t->pRight, k);
-  }
-  else {
-    return t;
-  }
-}
-void inOrder(TreeNode *t) {
-  if (t == NULL) {
-    return;
-  }
-  inOrder(t->pLeft);
-  printf("%c ", t->k);
-  inOrder(t->pRight);
-}
 void removeNode(TreeNode **t, key k) {
   TreeNode *x = *t, **prev = t;
 	while (x != NULL) {
@@ -104,6 +82,47 @@ void removeNode(TreeNode **t, key k) {
 		}
 	}
 }
+TreeNode* minNode(TreeNode *t) {
+	TreeNode *x = t;
+	for (;x != NULL && x->pLeft != NULL;x = x->pLeft);
+	return x;
+}
+TreeNode* maxNode(TreeNode *t) {
+	TreeNode *x = t;
+	for (;x != NULL && x->pRight != NULL;x = x->pRight);
+	return x;
+}
+TreeNode* prevNode(TreeNode *t) {
+	if (t == minNode(t)) return NULL;
+	return maxNode(t->pLeft);
+}
+TreeNode* nextNode(TreeNode *t) {
+	if (t == maxNode(t)) return NULL;
+	return minNode(t->pRight);
+}
+TreeNode* searchTree(TreeNode *t, key k) {
+  if (t == NULL){
+    return t;
+  }
+  if (t->k > k) {
+    return searchTree(t->pLeft, k);
+  }
+  else if (t->k < k) {
+    return searchTree(t->pRight, k);
+  }
+  else {
+    return t;
+  }
+}
+
+void inOrder(TreeNode *t) {
+  if (t == NULL) {
+    return;
+  }
+  inOrder(t->pLeft);
+  printf("%c ", t->k);
+  inOrder(t->pRight);
+}
 
 int main() {
 	TreeNode *t = NULL;
@@ -115,17 +134,27 @@ int main() {
       insertNode(&t, newNode(a, 0));
     }
     else if (p == 2) {
-      scanf(" %c", &a);
-      removeNode(&t, a);
-    }
-    else if (p == 3) {
       inOrder(t);
       printf("\n");
     }
-    else if (p == 4){
+    else if (p == 3) {
       test(t, 0);
     }
-    printf("1-insere, 2-remove, 3-print, 4-teste, 0-sair\n");
+    else if (p == 4){
+			printf("%c\n", minNode(t)->k);
+    }
+		else if (p == 5){
+      printf("%c\n", maxNode(t)->k);
+    }
+		else if (p == 6){
+			scanf(" %c", &a);
+      printf("%c\n", prevNode(searchTree(t, a))->k);
+    }
+		else if (p == 7){
+			scanf(" %c", &a);
+      printf("%c\n", nextNode(searchTree(t, a))->k);
+    }
+    printf("1-insere, 2-print, 3-teste, 4-min, 5-max, 6-ant, 7-suc, 0-sair\n");
     scanf("%d", &p);
   }
 	return 0;
