@@ -126,5 +126,3 @@ int main() {
   }
 	return 0;
 }
-
-// 1 P 1 H 1 D 1 A 1 C 1 E 1 O 1 I 1 M 1 L 1 N 1 T 1 S 1 U 1 Y
