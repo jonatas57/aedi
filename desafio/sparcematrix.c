@@ -1,11 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void check() {
-	printf("check\n");
-}
-
-typedef struct matriz mat;
+typedef struct matriz matriz;
 typedef struct head head;
 typedef struct node node;
 
@@ -22,24 +18,6 @@ struct node {
   int data, pos[2];
   node *next[2];
 };
-void test(mat *M){
-  printf("M->lc[0] = %p\n", M->lc[0]);
-  printf("M->lc[1] = %p\n", M->lc[1]);
-  printf("linhas:\n");
-  for (head *h = M->lc[0];h != NULL;h = h->next){
-    printf("%p: (%d, ?)->next = %p, node = %p\n", h, h->index, h->next, h->node);
-    for (node *n = h->node;n != NULL;n = n->next[0]){
-      printf("-%p: (%d, %d) = %d, v %p, > = %p\n", n, n->pos[0], n->pos[1], n->data, n->next[0], n->next[1]);
-    }
-  }
-  printf("colunas:\n");
-  for (head *h = M->lc[1];h != NULL;h = h->next){
-    printf("%p: (?, %d)->next = %p, node = %p\n", h, h->index, h->next, h->node);
-    for (node *n = h->node;n != NULL;n = n->next[1]){
-      printf("-%p: (%d, %d) = %d, > %p, v = %p\n", n, n->pos[0], n->pos[1], n->data, n->next[0], n->next[1]);
-    }
-  }
-}
 
 node* newNode(int data) {
 	node *x = malloc(sizeof(node));
@@ -48,107 +26,95 @@ node* newNode(int data) {
 	x->next[1] = NULL;
 	return x;
 }
-void initMat(mat *m, int l, int c) {
+void initMat(matriz *m, int l, int c) {
 	m->tam[0] = l;
 	m->tam[1] = c;
 	m->lc[0] = NULL;
 	m->lc[1] = NULL;
 }
-void insertNode(mat *m, node *x, int a, int b) {
-	x->pos[0] = a;
-	x->pos[1] = b;
-	for (int i = 0;i < 2;i++) {
-		head **h = &m->lc[i];
-		int p = 1;
-		while (p) {
-			check();
-			if (*h == NULL) {
-				head *new = malloc(sizeof(head));
-				new->index = x->pos[i];
-				new->next = NULL;
-				new->node = x;
-				*h = new;
-				p = 0;
-			}
-			else if ((*h)->index == x->pos[i]) {
-				node **n = &(*h)->node;
-				if ((*n)->pos[(i + 1) % 2] > x->pos[(i + 1) % 2]) {
-					x->next[i] = *n;
-					*n = x;
-				}
-				else if ((*n)->pos[(i + 1) % 2] == x->pos[(i + 1) % 2]) {
-					(*n)->data = x->data;
-					free(x);
-				}
-				else if ((*n)->next == NULL) {
-					(*n)->next[i] = x;
-				}
-				else if ((*n)->next[i]->pos[(i + 1) % 2] > x->pos[(i + 1) % 2]) {
-					x->next[i] = (*n)->next[i];
-					(*n)->next[i] = x;
-				}
-				n = &(*n)->next[(i + 1) % 2];
-			}
-			else if ((*h)->next->index > x->pos[i]) {
-				head *new = malloc(sizeof(head));
-				new->index = x->pos[i];
-				new->next = (*h)->next;
-				new->node = x;
-				(*h)->next = new;
-				p = 0;
-			}
-			h = &(*h)->next;
-		}
-	}
-	test(m);
+void insertNode(matriz *M, node *n, int x, int y) {
+  n->pos[0] = x;
+  n->pos[1] = y;
+  for (int a = 0;a < 2;a++) {
+    head **aux = &M->lc[a];
+    for (;*aux != NULL && (*aux)->index < n->pos[a] && (*aux)->next != NULL;aux = &(*aux)->next);
+    if (*aux == NULL || (*aux)->index > n->pos[a]) {
+      head *h = malloc(sizeof(head));
+      h->index = n->pos[a];
+      h->node = n;
+      h->next = *aux;
+      *aux = h;
+    }
+    else if ((*aux)->index == n->pos[a]) {
+      node **aux2 = &(*aux)->node;
+      for (;(*aux2)->pos[(a + 1) % 2] < n->pos[(a + 1) % 2] && (*aux2)->next[a] != NULL;aux2 = &(*aux2)->next[a]);
+      if ((*aux2)->pos[(a + 1) % 2] == n->pos[(a + 1) % 2]){
+        (*aux2)->data = n->data;
+        free(n);
+      }
+      else if ((*aux2)->pos[(a + 1) % 2] > n->pos[(a + 1) % 2]) {
+        n->next[a] = *aux2;
+        *aux2 = n;
+      }
+      else {
+        (*aux2)->next[a] = n;
+      }
+    }
+    else {
+      head *h = malloc(sizeof(head));
+      h->index = n->pos[a];
+      h->node = n;
+      h->next = (*aux)->next;
+      (*aux)->next = h;
+    }
+  }
 }
-void printMat(mat *m) {
-	if (m == NULL) return;
-	int x = m->tam[0], y = m->tam[1];
-	head *aux = m->lc[0];
-	for (int i = 0;i < x;i++) {
+void printMat(matriz *M) {
+  int x = M->tam[0], y = M->tam[1];
+  head *aux = M->lc[0];
+  node *n = NULL;
+  for (int i = 0;i < x;i++) {
+    int p = 0;
+    if (aux == NULL){
+      p = 1;
+    }
+    else if (i == aux->index) {
+      n = aux->node;
+      aux = aux->next;
+    }
 		printf("[");
-		node *naux = aux->node;
-		for (int j = 0;j < y;j++) {
-			if (naux == NULL || j < naux->pos[1]) {
-				printf("0 ");
-			}
-			else {
-				printf("%d ", naux->data);
-				naux = naux->next[1];
-			}
-		}
-		printf("]\n");
-	}
+    for (int j = 0;j < y;j++) {
+      if (p || n == NULL || j < n->pos[1]){
+        printf("0 ");
+      }
+      else {
+        printf("%d ", n->data);
+        n = n->next[0];
+      }
+    }
+    printf("]\n");
+  }
 }
-mat* multMat(mat *a, mat *b) {
-	mat *m = NULL;
-	if (a->tam[1] == b->tam[0]) {
-		int x = a->tam[0], y = b->tam[1], z = a->tam[1];
-		for (int i = 0;i < x;) {
-			head *ha = a->lc[0];
-			if (ha != NULL || ha->index == i) {
-				for (int j = 0;j < y;j++, i++) {
-					head *hb = b->lc[1];
-					if (hb != NULL || hb->index == j) {
-						int s = 0;
-						node *na = ha->node, *nb = hb->node;
-						for (int k = 0;k < z;k++) {
-							if (na->pos[1] == k && nb->pos[0] == k) {
-								s += na->pos[1] * nb->pos[k];
-							}
-							else if (na->pos[1] == k) {
-								na = na->next[0];
-							}
-							else if (nb->pos[0] == k) {
-								nb = nb->next[1];
-							}
-						}
-						if (s != 0) insertNode(m, newNode(s), i, j);
-					}
+matriz* multMat(matriz *a, matriz *b) {
+	matriz *m = malloc(sizeof(matriz));
+	initMat(m, a->tam[0], b->tam[1]);
+	for (head *i = a->lc[0];i != NULL;i = i->next) {
+		for (head *j = b->lc[1];j != NULL;j = j->next) {
+			int s = 0;
+			for (node *x = i->node, *y = j->node;x != NULL && y != NULL;) {
+				if (x->pos[1] > y->pos[0]) {
+					y = y->next[1];
+				}
+				else if (x->pos[1] < y->pos[0]){
+					x = x->next[0];
+				}
+				else {
+					s += x->data * y->data;
+					x = x->next[0];
+					y = y->next[1];
 				}
 			}
-			ha = ha->next;
+			insertNode(m, newNode(s), i->index, j->index);
 		}
 	}
 	return m;
@@ -156,7 +122,7 @@ mat* multMat(mat *a, mat *b) {
 
 int main() {
 	int la, ca, na, lb, cb, nb;
-  mat *A = malloc(sizeof(mat)), *B = malloc(sizeof(mat));
+  matriz *A = malloc(sizeof(matriz)), *B = malloc(sizeof(matriz));
 	scanf("%d %d %d %d %d %d", &la, &ca, &na, &lb, &cb, &nb);
 	initMat(A, la, ca);
 	initMat(B, lb, cb);
@@ -170,8 +136,8 @@ int main() {
 		insertNode(B, newNode(n), l, c);
 	}
 	char op;
+	matriz *M = NULL;
 	while (scanf("\n%c", &op) && op != 'S') {
-		mat *M = NULL;
 		switch (op) {
 			case 'A':
 			printMat(A);
@@ -183,15 +149,8 @@ int main() {
 			M = multMat(A, B);
 			printMat(M);
 			break;
-			case 'T':
-			printf("teste A:---------------------\n");
-			test(A);
-			printf("teste B:---------------------\n");
-			test(B);
-			printf("teste M:---------------------\n");
-			test(M);
-			break;
 		}
+		printf("\n");
 	}
 	return 0;
 }
