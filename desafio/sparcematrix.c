@@ -19,25 +19,6 @@ struct node {
   node *next[2];
 };
 
-void test(matriz *M){
-  printf("M->lc[0] = %p\n", M->lc[0]);
-  printf("M->lc[1] = %p\n", M->lc[1]);
-  printf("linhas:\n");
-  for (head *h = M->lc[0];h != NULL;h = h->next){
-    printf("%p: (%d, ?)->next = %p, node = %p\n", h, h->index, h->next, h->node);
-    for (node *n = h->node;n != NULL;n = n->next[0]){
-      printf("-%p: (%d, %d) = %d, > %p, v = %p\n", n, n->pos[0], n->pos[1], n->data, n->next[0], n->next[1]);
-    }
-  }
-  printf("colunas:\n");
-  for (head *h = M->lc[1];h != NULL;h = h->next){
-    printf("%p: (?, %d)->next = %p, node = %p\n", h, h->index, h->next, h->node);
-    for (node *n = h->node;n != NULL;n = n->next[1]){
-      printf("-%p: (%d, %d) = %d, > %p, v = %p\n", n, n->pos[0], n->pos[1], n->data, n->next[0], n->next[1]);
-    }
-  }
-}
-
 node* newNode(int data) {
 	node *x = malloc(sizeof(node));
 	x->data = data;
@@ -70,6 +51,7 @@ void insertNode(matriz *M, node *n, int x, int y) {
       if ((*aux2)->pos[(a + 1) % 2] == n->pos[(a + 1) % 2]){
         (*aux2)->data = n->data;
         free(n);
+        a = 3;
       }
       else if ((*aux2)->pos[(a + 1) % 2] > n->pos[(a + 1) % 2]) {
         n->next[a] = *aux2;
@@ -126,7 +108,7 @@ matriz* multMat(matriz *a, matriz *b) {
 					y = y->next[1];
 				}
 			}
-			insertNode(m, newNode(s), i->index, j->index);
+			if (s != 0) insertNode(m, newNode(s), i->index, j->index);
 		}
 	}
 	return m;
@@ -161,15 +143,6 @@ int main() {
 				case 'M':
 				M = multMat(A, B);
 				printMat(M);
-				break;
-				case 'T':
-				printf("A:---------------------\n");
-				test(A);
-				printf("B:---------------------\n");
-				test(B);
-				printf("M:---------------------\n");
-				test(M);
-				printf("-----------------------\n");
 				break;
 			}
 			printf("\n");
