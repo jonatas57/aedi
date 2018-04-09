@@ -1,0 +1,12 @@
+[Ja esta balanceado]
+[Ja esta balanceado]
+[No desbalanceado: 8]
+[Rotacao: SE]
+[x=8 y=16 z=20]
+A=1
+[Ja esta balanceado]
+[No desbalanceado: 8]
+[Rotacao: SE]
+[x=8 y=10 z=15]
+C=3 Nota=4
+[8 15 10 20 16 ]

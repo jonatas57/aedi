@@ -1,0 +1,21 @@
+#########################
+# EXECUTAR TESTES
+#########################
+    COUNTER=0
+    GRADE=0
+
+    for i in {1..4}
+    do
+	let COUNTER=COUNTER+1
+        DIFF=$(diff -w saida$i.txt gabarito$i.txt)
+        if [ "$DIFF" == "" ]; then
+            let GRADE=GRADE+1
+	    echo "$COUNTER ok"
+        else
+            echo "$COUNTER incorreto ($f)"
+        fi
+    done
+
+    echo -n "Nota "
+    echo -n $(echo "scale=2; $GRADE*10/$COUNTER" | bc)
+    echo " ($GRADE de $COUNTER)"
