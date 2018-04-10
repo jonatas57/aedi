@@ -7,19 +7,6 @@ struct avlNode {
 	int height, fb;
 	avlNode *left, *right;
 };
-void check(){
-  printf("check\n");
-}
-void test(avlNode *t, int a) {
-  if (t == NULL) return;
-	printf("|");
-  for(int i = 0;i < a;i++){
-    printf("-");
-  }
-  printf("%p == %d, %p <- -> %p, h = %d, fb = %d\n", t, t->key, t->left, t->right, t->height, t->fb);
-  test(t->left, a + 1);
-  test(t->right, a + 1);
-}
 
 int* updateNode(avlNode **t);//apenas inicialização
 
@@ -50,7 +37,7 @@ void rotateLeft(avlNode **t) {
 void balanceNode(avlNode **t) {
 	printf("[No desbalanceado: %d]\n", (*t)->key);
 	if ((*t)->fb > 1) {
-		if ((*t)->fb * (*t)->left->fb < 1) {
+		if ((*t)->fb * (*t)->left->fb < 0) {
 			printf("[Rotacao: DD]\n");
 			printf("[x=%d y=%d z=%d]\n", (*t)->left->key, (*t)->left->right->key, (*t)->key);
 			rotateLeft(&(*t)->left);
@@ -63,7 +50,7 @@ void balanceNode(avlNode **t) {
 		}
 	}
 	else {
-		if ((*t)->fb * (*t)->right->fb < 1) {
+		if ((*t)->fb * (*t)->right->fb < 0) {
 			printf("[Rotacao: DE]\n");
 			printf("[x=%d y=%d z=%d]\n", (*t)->key, (*t)->right->left->key, (*t)->right->key);
 			rotateRight(&(*t)->right);
@@ -78,7 +65,7 @@ void balanceNode(avlNode **t) {
 	updateNode(t);
 }
 int* updateNode(avlNode **t) {
-	int *x =malloc(2 * sizeof(int)), r = 1;
+	int *x = malloc(2 * sizeof(int)), r = 1;
 	x[0] = -1;
 	x[1] = 1;
 	if (*t != NULL) {
@@ -197,11 +184,6 @@ int main() {
 			postOrder(&raTree);
 			printf("]\n");
 			return 0;
-		}
-		else if (op == 'T') {
-			printf("---\n");
-			test(raTree, 0);
-			printf("---\n");
 		}
 	}
 }
