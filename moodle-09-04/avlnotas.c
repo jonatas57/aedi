@@ -12,6 +12,7 @@ void check(){
 }
 void test(avlNode *t, int a) {
   if (t == NULL) return;
+	printf("|");
   for(int i = 0;i < a;i++){
     printf("-");
   }
@@ -38,14 +39,12 @@ void rotateRight(avlNode **t) {
   avlNode *aux = (*t)->left;
   (*t)->left = aux->right;
   aux->right = *t;
-  updateNode(t);
   *t = aux;
 }
 void rotateLeft(avlNode **t) {
   avlNode *aux = (*t)->right;
   (*t)->right = aux->left;
   aux->left = *t;
-  updateNode(t);
   *t = aux;
 }
 void balanceNode(avlNode **t) {
@@ -53,26 +52,30 @@ void balanceNode(avlNode **t) {
 	if ((*t)->fb > 1) {
 		if ((*t)->fb * (*t)->left->fb < 1) {
 			printf("[Rotacao: DD]\n");
+			printf("[x=%d y=%d z=%d]\n", (*t)->left->key, (*t)->left->right->key, (*t)->key);
 			rotateLeft(&(*t)->left);
 			rotateRight(&(*t));
 		}
 		else {
 			printf("[Rotacao: SD]\n");
+			printf("[x=%d y=%d z=%d]\n", (*t)->left->left->key, (*t)->left->key, (*t)->key);
 			rotateRight(&(*t));
 		}
 	}
 	else {
 		if ((*t)->fb * (*t)->right->fb < 1) {
 			printf("[Rotacao: DE]\n");
+			printf("[x=%d y=%d z=%d]\n", (*t)->key, (*t)->right->left->key, (*t)->right->key);
 			rotateRight(&(*t)->right);
 			rotateLeft(&(*t));
 		}
 		else {
 			printf("[Rotacao: SE]\n");
+			printf("[x=%d y=%d z=%d]\n", (*t)->key, (*t)->right->key, (*t)->right->right->key);
 			rotateLeft(&(*t));
 		}
 	}
-	printf("[x=%d y=%d z=%d]\n", (*t)->left->key, (*t)->key, (*t)->right->key);
+	updateNode(t);
 }
 int* updateNode(avlNode **t) {
 	int *x =malloc(2 * sizeof(int)), r = 1;
@@ -108,32 +111,35 @@ int insertNode(avlNode **t, int key, int value) {
 	r *= updateNode(t)[1];
 	return r;
 }
-void removeNode(avlNode **endt, avlNode *t, int key) {
-	if (t == NULL) return;
-	if (t->key > key) {
-		removeNode(&t->right, t->right, key);
-	}
-	else if (t->key < key) {
-		removeNode(&t->left, t->left, key);
-	}
-	else {
-		if (t->left == NULL) {
-			*endt = t->right;
-			free(t);
+int removeNode(avlNode **endt, avlNode *t, int key) {
+	int r = 1;
+	if (t != NULL) {
+		if (t->key > key) {
+			r *= removeNode(&t->left, t->left, key);
 		}
-		else if (t->right == NULL) {
-			*endt = t->left;
-			free(t);
+		else if (t->key < key) {
+			r *= removeNode(&t->right, t->right, key);
 		}
 		else {
-			avlNode *x = t->right, **endx = &t->right;
-			for (;x->left != NULL;endx = &x->left, x = x->left);
-			t->key = x->key;
-			t->value = x->value;
-			removeNode(endx, x, x->key);
+			if (t->left == NULL) {
+				*endt = t->right;
+				free(t);
+			}
+			else if (t->right == NULL) {
+				*endt = t->left;
+				free(t);
+			}
+			else {
+				avlNode *x = t->right, **endx = &t->right;
+				for (;x->left != NULL;endx = &x->left, x = x->left);
+				t->key = x->key;
+				t->value = x->value;
+				r *= removeNode(endx, x, x->key);
+			}
 		}
+		r *= updateNode(endt)[1];
 	}
-	updateNode(endt);
+	return r;
 }
 int* searchNode(avlNode *t, int key) {
 	int *aux = malloc(2 * sizeof(int));
@@ -174,8 +180,8 @@ int main() {
 		else if (op == 'R') {
 			int ra;
 			scanf("%d\n", &ra);
-			removeNode(&raTree, raTree, ra);
-			test(raTree, 0);
+			int r = removeNode(&raTree, raTree, ra);
+			if (r) printf("[Ja esta balanceado]\n");
 		}
 		else if (op == 'B') {
 			int ra;
@@ -191,6 +197,11 @@ int main() {
 			postOrder(&raTree);
 			printf("]\n");
 			return 0;
+		}
+		else if (op == 'T') {
+			printf("---\n");
+			test(raTree, 0);
+			printf("---\n");
 		}
 	}
 }
