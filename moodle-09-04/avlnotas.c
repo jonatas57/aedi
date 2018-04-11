@@ -21,66 +21,62 @@ avlNode* newNode(int key, int value) {
 		x->right = NULL;
 	}
 	return x;
-}
+}//
 void rotateRight(avlNode **t) {
   avlNode *aux = (*t)->left;
   (*t)->left = aux->right;
   aux->right = *t;
   *t = aux;
-}
+}//
 void rotateLeft(avlNode **t) {
   avlNode *aux = (*t)->right;
   (*t)->right = aux->left;
   aux->left = *t;
   *t = aux;
-}
+}//
 void balanceNode(avlNode **t) {
 	printf("[No desbalanceado: %d]\n", (*t)->key);
 	if ((*t)->fb > 1) {
 		if ((*t)->fb * (*t)->left->fb < 0) {
 			printf("[Rotacao: DD]\n");
-			printf("[x=%d y=%d z=%d]\n", (*t)->left->key, (*t)->left->right->key, (*t)->key);
 			rotateLeft(&(*t)->left);
-			rotateRight(&(*t));
+			rotateRight(t);
 		}
 		else {
 			printf("[Rotacao: SD]\n");
-			printf("[x=%d y=%d z=%d]\n", (*t)->left->left->key, (*t)->left->key, (*t)->key);
-			rotateRight(&(*t));
+			rotateRight(t);
 		}
 	}
 	else {
 		if ((*t)->fb * (*t)->right->fb < 0) {
 			printf("[Rotacao: DE]\n");
-			printf("[x=%d y=%d z=%d]\n", (*t)->key, (*t)->right->left->key, (*t)->right->key);
 			rotateRight(&(*t)->right);
-			rotateLeft(&(*t));
+			rotateLeft(t);
 		}
 		else {
 			printf("[Rotacao: SE]\n");
-			printf("[x=%d y=%d z=%d]\n", (*t)->key, (*t)->right->key, (*t)->right->right->key);
-			rotateLeft(&(*t));
+			rotateLeft(t);
 		}
 	}
+	printf("[x=%d y=%d z=%d]\n", (*t)->left->key, (*t)->key, (*t)->right->key);
 	updateNode(t);
 }
 int* updateNode(avlNode **t) {
-	int *x = malloc(2 * sizeof(int)), r = 1;
+	int *x = malloc(2 * sizeof(int));
 	x[0] = -1;
 	x[1] = 1;
 	if (*t != NULL) {
-		int *a = updateNode(&(*t)->left), *b = updateNode(&(*t)->right);
-		(*t)->height = (a[0] > b[0] ? a[0] : b[0]) + 1;
-		(*t)->fb = a[0] - b[0];
+		int a = updateNode(&(*t)->left)[0], b = updateNode(&(*t)->right)[0];
+		(*t)->height = (a > b ? a : b) + 1;
+		(*t)->fb = a - b;
 		if ((*t)->fb > 1 || (*t)->fb < -1) {
 			balanceNode(t);
-			r = 0;
+			x[1] = 0;
 		}
 		x[0] = (*t)->height;
-		x[1] = r;
 	}
 	return x;
-}
+}//
 int insertNode(avlNode **t, int key, int value) {
 	int r = 1;
 	if (*t == NULL) {
@@ -97,7 +93,7 @@ int insertNode(avlNode **t, int key, int value) {
 	}
 	r *= updateNode(t)[1];
 	return r;
-}
+}//
 int removeNode(avlNode **endt, avlNode *t, int key) {
 	int r = 1;
 	if (t != NULL) {
@@ -127,7 +123,7 @@ int removeNode(avlNode **endt, avlNode *t, int key) {
 		r *= updateNode(endt)[1];
 	}
 	return r;
-}
+}//
 int* searchNode(avlNode *t, int key) {
 	int *aux = malloc(2 * sizeof(int));
 	aux[0] = 0;
@@ -145,14 +141,14 @@ int* searchNode(avlNode *t, int key) {
 		aux[0]++;
 	}
 	return aux;
-}
+}//
 void postOrder(avlNode **t) {
 	if (*t == NULL) return;
 	postOrder(&(*t)->left);
 	postOrder(&(*t)->right);
 	printf("%d ", (*t)->key);
 	removeNode(t, *t, (*t)->key);
-}
+}//
 
 int main() {
 	avlNode *raTree = NULL;
@@ -166,13 +162,13 @@ int main() {
 		}
 		else if (op == 'R') {
 			int ra;
-			scanf("%d\n", &ra);
+			scanf("%d", &ra);
 			int r = removeNode(&raTree, raTree, ra);
 			if (r) printf("[Ja esta balanceado]\n");
 		}
 		else if (op == 'B') {
 			int ra;
-			scanf("%d\n", &ra);
+			scanf("%d", &ra);
 			int *x = searchNode(raTree, ra);
 			printf("C=%d Nota=%d\n", x[0], x[1]);
 		}
