@@ -34,7 +34,7 @@ void rotateLeft(avlNode **t) {
   aux->left = *t;
   *t = aux;
 }//
-void balanceNode(avlNode **t) {
+int* balanceNode(avlNode **t) {
 	printf("[No desbalanceado: %d]\n", (*t)->key);
 	if ((*t)->fb > 1) {
 		if ((*t)->fb * (*t)->left->fb < 0) {
@@ -59,16 +59,17 @@ void balanceNode(avlNode **t) {
 		}
 	}
 	printf("[x=%d y=%d z=%d]\n", (*t)->left->key, (*t)->key, (*t)->right->key);
-	updateNode(t);
+	return updateNode(t);
 }
 int* updateNode(avlNode **t) {
 	int *x = malloc(2 * sizeof(int));
 	x[0] = -1;
 	x[1] = 1;
 	if (*t != NULL) {
-		int a = updateNode(&(*t)->left)[0], b = updateNode(&(*t)->right)[0];
-		(*t)->height = (a > b ? a : b) + 1;
-		(*t)->fb = a - b;
+		int *a = updateNode(&(*t)->left), *b = updateNode(&(*t)->right);
+		(*t)->height = (a[0] > b[0] ? a[0] : b[0]) + 1;
+		(*t)->fb = a[0] - b[0];
+		x[1] *= a[1] * b[1];
 		if ((*t)->fb > 1 || (*t)->fb < -1) {
 			balanceNode(t);
 			x[1] = 0;
