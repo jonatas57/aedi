@@ -118,38 +118,38 @@ int main() {
 	int la, ca, na, lb, cb, nb;
   matriz *A = malloc(sizeof(matriz)), *B = malloc(sizeof(matriz));
 	scanf("%d %d %d %d %d %d", &la, &ca, &na, &lb, &cb, &nb);
-	if (ca == lb) {
-		initMat(A, la, ca);
-		initMat(B, lb, cb);
-		int l, c, n;
-		for (int i = 0;i < na;i++) {
-			scanf("%d %d %d", &l, &c, &n);
-			insertNode(A, newNode(n), l, c);
-		}
-		for (int i = 0;i < nb;i++) {
-			scanf("%d %d %d", &l, &c, &n);
-			insertNode(B, newNode(n), l, c);
-		}
-		char op;
-		matriz *M = NULL;
-		while (scanf("\n%c", &op) && op != 'S') {
-			switch (op) {
-				case 'A':
-				printMat(A);
-				break;
-				case 'B':
-				printMat(B);
-				break;
-				case 'M':
+	initMat(A, la, ca);
+	initMat(B, lb, cb);
+	int l, c, n;
+	for (int i = 0;i < na;i++) {
+		scanf("%d %d %d", &l, &c, &n);
+		insertNode(A, newNode(n), l, c);
+	}
+	for (int i = 0;i < nb;i++) {
+		scanf("%d %d %d", &l, &c, &n);
+		insertNode(B, newNode(n), l, c);
+	}
+	char op;
+	matriz *M = NULL;
+	while (scanf("\n%c", &op) && op != 'S') {
+		switch (op) {
+			case 'A':
+			printMat(A);
+			break;
+			case 'B':
+			printMat(B);
+			break;
+			case 'M':
+			if (ca == lb) {
 				M = multMat(A, B);
 				printMat(M);
-				break;
 			}
-			printf("\n");
+			else {
+				printf("ERRO\n");
+			}
+			break;
 		}
-	}
-	else {
-		printf("ERRO\n");
+		printf("\n");
 	}
 	return 0;
 }
