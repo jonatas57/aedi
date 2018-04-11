@@ -7,7 +7,8 @@
     for i in {1..4}
     do
 	let COUNTER=COUNTER+1
-        DIFF=$(diff -w saida$i.txt gabarito$i.txt)
+		./a.out < ./in/entrada$i.txt > ./out/saida$i.txt
+        DIFF=$(diff -w ./out/saida$i.txt ./src/gabarito$i.txt)
         if [ "$DIFF" == "" ]; then
             let GRADE=GRADE+1
 	    echo "$COUNTER ok"
