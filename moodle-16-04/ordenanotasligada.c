@@ -6,11 +6,13 @@ typedef struct s_node *node;
 struct s_node{
   int ra, nota;
   char *nome;
-  no ant, prox;
+  node ant, prox;
 };
-
-//cria um novo nó e retorna ele
-node newNode(int ra, int nota, char *nome){
+void check() {
+	printf("check\n");
+}
+//cria e retorna um novo nó
+node newNode(int ra, int nota, char *nome) {
   node x = (node) malloc(sizeof(struct s_node));
 
   if(x != NULL) {
@@ -22,17 +24,23 @@ node newNode(int ra, int nota, char *nome){
   }
   return x;
 }
+
 //insere um no
 void insertNode(node* lista, node x) {
+  if (*lista == NULL) {
+  	*lista = x;
+  	x->ant = *lista;
+  	return;
+  }
   node aux = *lista;
-  for (aux != NULL && aux->prox != NULL;aux = aux->prox);
+  for (; aux->prox != NULL; aux = aux->prox);
   aux->prox = x;
   x->ant = aux;
 }
 
 //busca um ra na lista e retorna a posição
-void searchNode(node *head, int ra){
-  if (*head  == NULL) return NULL;
+void searchNode(node *head, int ra) {
+  if (*head  == NULL) return;
 
   node aux = *head;
   int pos = 0;
@@ -41,59 +49,90 @@ void searchNode(node *head, int ra){
     pos++;
   }
 
-  if (aux){  //nó existe
-    printf("%d\n", pos);
-  }else{  //nó não existe
-    printf("-1\n");
-  }
+  printf("Pos=%d\n", aux ? pos : -1);
 }
 
-int compare(void* a, void* b, int campo) {
+/*Compara 2 nós:
+Campo:
+	1 - Compara os RAs
+	2 - Compara os nomes
+*/
+int compare(node a, node b, int campo) {
   if (campo == 1) {
-    return *(int *)a > *(int *)b;
+    return a->ra > b->ra;
   }
   else {
-    return strcmp((char *)a, (char *)b) + 1;
+    return strcmp(a->nome, b->nome);
   }
 }
-long int insertionSort(no *head, int campo) {
-  long int comp = 0;
-  for (node i = (*head)->prox;i != NULL;i = i->prox) {
-    node j = i->ant;
-    void *key = (campo == 1) ? &i->ra : &i->nome;
-    while (j != NULL && ++comp && compare((campo == 1 ? &j->ra : &j->nome), key, campo)) {
-      j = j->ant;
-    }
 
-  }
+//Ordena a lista por inserção
+long int insertionSort(node *head, int campo) {
+  long int comp = 0;
+	int tmpRA, tmpNota;
+	char *tmpNome;
+	if (*head != NULL) {
+		for (node i = (*head)->prox;i != NULL;i = i->prox) {
+			node j = i->ant;
+			while (j != NULL && ++comp && compare(j, i, campo) > 0) {
+				printf("%ld\n", comp);
+				j = j->ant;
+			}
+			if (i != j) {
+				tmpRA = i->ra;
+				tmpNome = i->nome;
+				tmpNota = i->nota;
+
+				i->ra = j->ra;
+				i->nome = j->nome;
+				i->nota = j->nota;
+
+				j->ra = tmpRA;
+				j->nome = tmpNome;
+				j->nota = tmpNota;
+			}
+		}
+	}
   return comp;
 }
 
-
 //Ordena a lista por seleção
-long int selectionSort(no *head, int campo){
+long int selectionSort(node *head, int campo) {
   if (*head == NULL) return 0;
 
-  node aux = *head;
+  node i = *head;
   long int comp = 0;
+  int tmpRA, tmpNota;
+  char *tmpNome;
 
-  for (; aux->prox != NULL; aux = aux->prox){
-    node min = aux;
-    node tmp = aux->prox;
+	for (; i->prox != NULL; i = i->prox){
+	node min = i;
+	node j = i->prox;
 
-    for (; tmp != NULL; tmp = tmp->prox){
-      if (min > tmp){
-        min = tmp;
-        comp++;
-      }
+		for (; j != NULL; j = j->prox){
+			if (compare(min, j, campo) >  0){
+			min = j;
+			}
+			comp++;
+		}
 
-      if (min != aux){
-        tmp = aux;
-        aux = min;
+		if (min->ra != i->ra){
+			tmpRA = i->ra;
+			tmpNome = i->nome;
+			tmpNota = i->nota;
 
-      }
+			i->ra = min->ra;
+			i->nome = min->nome;
+			i->nota = min->nota;
 
-    }
+			min->ra = tmpRA;
+			min->nome = tmpNome;
+			min->nota = tmpNota;
+		}
+
+	}
+
+	return comp;
 }
 
 /*Ordena a lista:
@@ -104,15 +143,15 @@ Campo chave:
   1: RA
   2: Nome
 */
-long int ordenaLista(int algoritmo, int campo, no* head){
-  if (*head == NULL) return NULL;
+long int ordenaLista(int algoritmo, int campo, node* head) {
+  if (*head == NULL) return 0;
 
   long int comp;  //número de comparações
 
   if (algoritmo == 1){  //Ordenação por seleção
-    comp = selectionSort(no* head, int campo);
+    comp = selectionSort(head, campo);
   }else if (algoritmo == 2){  //Ordena por inserção
-    comp = insertionSort(no *head, int campo);
+    comp = insertionSort(head, campo);
   }
 
   return comp;
@@ -125,8 +164,17 @@ void printList(node lista) {
   printList(lista->prox);
 }
 
-int main(int argc, char const *argv[])
-{
+//deleta um no
+void deleteNode(node *x) {
+	node aux = *x;
+	*x = (*x)->prox;
+	if ((*x)->prox != NULL) {
+		(*x)->ant = NULL;
+	}
+	free(aux);
+}
+
+int main(int argc, char const *argv[]) {
   char op;
   node lista = NULL;
   while (scanf("\n%c", &op) != -1) {
@@ -134,7 +182,7 @@ int main(int argc, char const *argv[])
     char *nome = malloc(51 * sizeof(char));
     switch (op) {
       case 'I':
-        scanf("%d %s %d", ra, nome, nota);
+        scanf("%d %s %d", &ra, nome, &nota);
         insertNode(&lista, newNode(ra, nota, nome));
       break;
       case 'O':
@@ -143,16 +191,15 @@ int main(int argc, char const *argv[])
       break;
       case 'B':
         scanf("%d", &ra);
-        printf("Pos=");
         searchNode(&lista, ra);
       break;
       case 'M':
         printList(lista);
       break;
       case 'P':
-        while(lista != NULL) {
-          deleteNode(&lista);
-        }
+        // while(lista != NULL) {
+        // 	deleteNode(&lista);
+        // }
         return 0;
       break;
     }
