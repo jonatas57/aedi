@@ -77,6 +77,7 @@ long int insertionSort(node *head, int campo) {
 			while (j != NULL && ++comp && compare(j, i, campo) > 0) {
 				j = j->ant;
 			}
+			j = j == NULL ? *head : j->prox;
 			if (i != j) {
 				tmpRA = i->ra;
 				tmpNome = i->nome;
