@@ -11,6 +11,11 @@ struct s_node{
 void check() {
 	printf("check\n");
 }
+void test(node list) {
+	if (list == NULL) return;
+	printf("%p = [%d %s %d], %p <- -> %p\n", list, list->ra, list->nome, list->nota, list->ant, list->prox);
+	test(list->prox);
+}
 //cria e retorna um novo nó
 node newNode(int ra, int nota, char *nome) {
   node x = (node) malloc(sizeof(struct s_node));
@@ -69,8 +74,6 @@ int compare(node a, node b, int campo) {
 //Ordena a lista por inserção
 long int insertionSort(node *head, int campo) {
   long int comp = 0;
-	int tmpRA, tmpNota;
-	char *tmpNome;
 	if (*head != NULL) {
 		for (node i = (*head)->prox;i != NULL;i = i->prox) {
 			node j = i->ant;
@@ -78,18 +81,24 @@ long int insertionSort(node *head, int campo) {
 				j = j->ant;
 			}
 			j = j == NULL ? *head : j->prox;
+			int p = j == i->ant;
 			if (i != j) {
-				tmpRA = i->ra;
-				tmpNome = i->nome;
-				tmpNota = i->nota;
+				node x = i->ant, y = j->prox;
 
-				i->ra = j->ra;
-				i->nome = j->nome;
-				i->nota = j->nota;
+				i->ant = j->ant;
+				j->prox = i->prox;
 
-				j->ra = tmpRA;
-				j->nome = tmpNome;
-				j->nota = tmpNota;
+				if (i->ant != NULL) {
+					i->ant->prox = i;
+				}
+				if (j->prox != NULL) {
+					j->prox->ant = j;
+				}
+
+				i->prox = p ? j : y;
+				j->ant = p ? i : x;
+				i->prox->ant = i;
+				j->ant->prox = j;
 			}
 		}
 	}
