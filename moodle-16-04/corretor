@@ -1,0 +1,35 @@
+#!/bin/bash
+#########################
+# EXECUTAR TESTES
+#########################
+    COUNTER=0
+    GRADE=0
+    #./gen-points.py
+###################################################caso tenha codigo correto
+    #gcc gabarito.c
+    #for i in {1..999}      ###N em gen.py
+  #  do
+  #    ./a.out < ./in/entrada$i.txt > ./src/gabarito$i.txt
+    #done
+###################################################
+    gcc ordenanotasligada.c         ###meu codigo
+    for i in {1..2}      ###N em gen.py
+    do
+      ./a.out < ./in/entrada$i.txt > ./out/saida$i.txt
+    done
+
+    for i in {1..2}      ###N em gen.py
+    do
+	let COUNTER=COUNTER+1
+        DIFF=$(diff -w ./out/saida$i.txt ./src/gabarito$i.txt)
+        if [ "$DIFF" == "" ]; then
+            let GRADE=GRADE+1
+	    echo "$COUNTER ok"
+        else
+            echo "$COUNTER incorreto ($f)"
+        fi
+    done
+
+    echo -n "Nota "
+    echo -n $(echo "scale=2; $GRADE*10/$COUNTER" | bc)
+    echo " ($GRADE de $COUNTER)"

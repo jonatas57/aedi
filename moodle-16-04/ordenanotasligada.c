@@ -29,7 +29,7 @@ node newNode(int ra, int nota, char *nome) {
 void insertNode(node* lista, node x) {
   if (*lista == NULL) {
   	*lista = x;
-  	x->ant = *lista;
+  	x->ant = NULL;
   	return;
   }
   node aux = *lista;
@@ -75,7 +75,6 @@ long int insertionSort(node *head, int campo) {
 		for (node i = (*head)->prox;i != NULL;i = i->prox) {
 			node j = i->ant;
 			while (j != NULL && ++comp && compare(j, i, campo) > 0) {
-				printf("%ld\n", comp);
 				j = j->ant;
 			}
 			if (i != j) {
