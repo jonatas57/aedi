@@ -81,24 +81,15 @@ long int insertionSort(node *head, int campo) {
 				j = j->ant;
 			}
 			j = j == NULL ? *head : j->prox;
-			int p = j == i->ant;
 			if (i != j) {
-				node x = i->ant, y = j->prox;
-
+				node aux = i->ant;
+				i->ant->prox = i->prox;
+				if (i->prox != NULL) i->prox->ant = i->ant;
 				i->ant = j->ant;
-				j->prox = i->prox;
-
-				if (i->ant != NULL) {
-					i->ant->prox = i;
-				}
-				if (j->prox != NULL) {
-					j->prox->ant = j;
-				}
-
-				i->prox = p ? j : y;
-				j->ant = p ? i : x;
-				i->prox->ant = i;
-				j->ant->prox = j;
+				i->prox = j;
+				if (j->ant != NULL) j->ant->prox = i;
+				j->ant = i;
+				i = aux;
 			}
 		}
 	}
@@ -211,6 +202,9 @@ int main(int argc, char const *argv[]) {
         // }
         return 0;
       break;
+			case 'T':
+			test(lista);
+			break;
     }
   }
 }
