@@ -77,23 +77,22 @@ long int insertionSort(node *head, int campo) {
 	if (*head != NULL) {
 		for (node i = (*head)->prox;i != NULL;i = i->prox) {
 			node j = i->ant;
-			while (j != NULL && ++comp && compare(j, i, campo) > 0) {
-				j = j->ant;
-			}
-			j = j == NULL ? *head : j->prox;
+			for (;j != NULL && ++comp && compare(j, i, campo) > 0;j = j->ant);
+			j = (j == NULL) ? *head : j->prox;
 			if (i != j) {
 				node aux = i->ant;
 				i->ant->prox = i->prox;
-				if (i->prox != NULL) i->prox->ant = i->ant;
-				i->ant = j->ant;
+				if (i->prox != NULL) i->prox->ant = aux;
 				i->prox = j;
-				if (j->ant != NULL) j->ant->prox = i;
+				i->ant = j->ant;
+				if (i->ant != NULL) i->ant->prox = i;
 				j->ant = i;
 				i = aux;
 			}
 		}
+
 	}
-  return comp;
+	return comp;
 }
 
 //Ordena a lista por seleção
@@ -165,13 +164,8 @@ void printList(node lista) {
 }
 
 //deleta um no
-void deleteNode(node *x) {
-	node aux = *x;
-	*x = (*x)->prox;
-	if ((*x)->prox != NULL) {
-		(*x)->ant = NULL;
-	}
-	free(aux);
+void deleteNode(node *ini){
+
 }
 
 int main(int argc, char const *argv[]) {
@@ -197,14 +191,16 @@ int main(int argc, char const *argv[]) {
         printList(lista);
       break;
       case 'P':
-        // while(lista != NULL) {
-        // 	deleteNode(&lista);
-        // }
+				while (lista != NULL){
+					node x = lista;
+				 	lista = x->prox;
+					if (x->prox != NULL) {
+						x->prox->ant = NULL;
+					}
+					free(x);
+				}
         return 0;
       break;
-			case 'T':
-			test(lista);
-			break;
     }
   }
 }
