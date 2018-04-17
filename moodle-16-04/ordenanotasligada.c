@@ -1,3 +1,6 @@
+/*Dupla: 	11036516 Jonatas Duarte Souza
+          11040016 Filipi de Carvalho Brabo */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,14 +11,7 @@ struct s_node{
   char *nome;
   node ant, prox;
 };
-void check() {
-	printf("check\n");
-}
-void test(node list) {
-	if (list == NULL) return;
-	printf("%p = [%d %s %d], %p <- -> %p\n", list, list->ra, list->nome, list->nota, list->ant, list->prox);
-	test(list->prox);
-}
+
 //cria e retorna um novo nó
 node newNode(int ra, int nota, char *nome) {
   node x = (node) malloc(sizeof(struct s_node));
@@ -80,14 +76,18 @@ long int insertionSort(node *head, int campo) {
 			for (;j != NULL && ++comp && compare(j, i, campo) > 0;j = j->ant);
 			j = (j == NULL) ? *head : j->prox;
 			if (i != j) {
-				node aux = i->ant;
-				i->ant->prox = i->prox;
-				if (i->prox != NULL) i->prox->ant = aux;
-				i->prox = j;
-				i->ant = j->ant;
-				if (i->ant != NULL) i->ant->prox = i;
-				j->ant = i;
-				i = aux;
+				node aux = i;
+				int tmpRA = i->ra, tmpNota = i->nota;
+				char *tmpNome = i->nome;
+				while (aux != j) {
+					aux->ra = aux->ant->ra;
+					aux->nota = aux->ant->nota;
+					aux->nome = aux->ant->nome;
+					aux = aux->ant;
+				}
+				j->ra = tmpRA;
+				j->nome = tmpNome;
+				j->nota = tmpNota;
 			}
 		}
 
@@ -143,15 +143,15 @@ Campo chave:
   2: Nome
 */
 long int ordenaLista(int algoritmo, int campo, node* head) {
-  if (*head == NULL) return 0;
+	long int comp = 0;  //número de comparações
 
-  long int comp;  //número de comparações
-
-  if (algoritmo == 1){  //Ordenação por seleção
-    comp = selectionSort(head, campo);
-  }else if (algoritmo == 2){  //Ordena por inserção
-    comp = insertionSort(head, campo);
-  }
+	if (*head != NULL) {
+		if (algoritmo == 1){  //Ordenação por seleção
+			comp = selectionSort(head, campo);
+		}else if (algoritmo == 2){  //Ordena por inserção
+			comp = insertionSort(head, campo);
+		}
+	}
 
   return comp;
 }
