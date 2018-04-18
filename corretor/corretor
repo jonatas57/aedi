@@ -10,20 +10,29 @@
     let rem=$1
   fi
   read -p 'Quantidade de casos de teste: ' qtdteste
+  if [ ! -d "./ent" ]; then
+    mkdir ent
+  fi
+  if [ ! -d "./out" ]; then
+    mkdir out
+  fi
+  if [ ! -d "./gab" ]; then
+    mkdir gab
+  fi
   ./gen.py $qtdteste
 ###################################################caso tenha codigo correto
   gcc gabarito.c
   i=0
   while [ $i -lt $qtdteste ]; do
     let i=i+1
-    ./a.out < ./in/entrada$i.txt > ./gab/gabarito$i.txt
+    ./a.out < ./ent/entrada$i.txt > ./gab/gabarito$i.txt
   done
 ###################################################
   gcc teste.c
   let i=0
   while [ $i -lt $qtdteste ]; do
     let i=i+1
-    ./a.out < ./in/entrada$i.txt > ./out/saida$i.txt
+    ./a.out < ./ent/entrada$i.txt > ./out/saida$i.txt
   done
   let i=0
   while [ $i -lt $qtdteste ]; do
@@ -33,21 +42,21 @@
     if [ "$DIFF" == "" ]; then
       let GRADE=GRADE+1
       echo "$COUNTER ok"
-      if [ "$rem" -ne "0" ]; then
-        rm ./in/entrada$i.txt
+      if [ "$rem" -eq "1" ]; then
+        rm ./ent/entrada$i.txt
         rm ./out/saida$i.txt
         rm ./gab/gabarito$i.txt
       fi
     else
       echo "$COUNTER incorreto ($f)"
-      if [ "$rem" -eq "2" ]; then
-        rm ./in/entrada$i.txt
-        rm ./out/saida$i.txt
-        rm ./gab/gabarito$i.txt
-      fi
     fi
   done
   rm ./a.out
   echo -n "Nota "
   echo -n $(echo "scale=2; $GRADE*10/$COUNTER" | bc)
   echo " ($GRADE de $COUNTER)"
+  if [ "$rem" -eq "2" ] && [ "$GRADE" -eq "$COUNTER" ]; then
+    rm -rf ent
+    rm -rf out
+    rm -rf gab
+  fi
