@@ -2,34 +2,52 @@
 #########################
 # EXECUTAR TESTES
 #########################
-    COUNTER=0
-    GRADE=0
-    ./gen-points.py
+  COUNTER=0
+  GRADE=0
+  if [ "$1" == "" ]; then
+    let rem=0
+  else
+    let rem=$1
+  fi
+  read -p 'Quantidade de casos de teste: ' qtdteste
+  ./gen.py $qtdteste
 ###################################################caso tenha codigo correto
-    gcc gabarito.c
-    for i in {1..999}      ###N em gen.py
-    do
-      ./a.out < ./in/entrada$i.txt > ./src/gabarito$i.txt
-    done
+  gcc gabarito.c
+  i=0
+  while [ $i -lt $qtdteste ]; do
+    let i=i+1
+    ./a.out < ./in/entrada$i.txt > ./gab/gabarito$i.txt
+  done
 ###################################################
-    gcc avlnotas.c         ###meu codigo
-    for i in {1..999}      ###N em gen.py
-    do
-      ./a.out < ./in/entrada$i.txt > ./out/saida$i.txt
-    done
-
-    for i in {1..999}      ###N em gen.py
-    do
-	let COUNTER=COUNTER+1
-        DIFF=$(diff -w ./out/saida$i.txt ./src/gabarito$i.txt)
-        if [ "$DIFF" == "" ]; then
-            let GRADE=GRADE+1
-	    echo "$COUNTER ok"
-        else
-            echo "$COUNTER incorreto ($f)"
-        fi
-    done
-
-    echo -n "Nota "
-    echo -n $(echo "scale=2; $GRADE*10/$COUNTER" | bc)
-    echo " ($GRADE de $COUNTER)"
+  gcc teste.c
+  let i=0
+  while [ $i -lt $qtdteste ]; do
+    let i=i+1
+    ./a.out < ./in/entrada$i.txt > ./out/saida$i.txt
+  done
+  let i=0
+  while [ $i -lt $qtdteste ]; do
+    let COUNTER=COUNTER+1
+    let i=i+1
+    DIFF=$(diff -w ./out/saida$i.txt ./gab/gabarito$i.txt)
+    if [ "$DIFF" == "" ]; then
+      let GRADE=GRADE+1
+      echo "$COUNTER ok"
+      if [ "$rem" -ne "0" ]; then
+        rm ./in/entrada$i.txt
+        rm ./out/saida$i.txt
+        rm ./gab/gabarito$i.txt
+      fi
+    else
+      echo "$COUNTER incorreto ($f)"
+      if [ "$rem" -eq "2" ]; then
+        rm ./in/entrada$i.txt
+        rm ./out/saida$i.txt
+        rm ./gab/gabarito$i.txt
+      fi
+    fi
+  done
+  rm ./a.out
+  echo -n "Nota "
+  echo -n $(echo "scale=2; $GRADE*10/$COUNTER" | bc)
+  echo " ($GRADE de $COUNTER)"
