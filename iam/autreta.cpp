@@ -18,30 +18,38 @@ public:
 		deg = a;
 		coef = (int *)calloc(a + 1, sizeof(int));
 	}
-	~Polinomio() {}
+	void print() {
+		for (int i = 0;i <= deg;i++) {
+			cout << coef[i] << ' ';
+		}
+		cout << endl;
+	}
 	Polinomio operator+(Polinomio &pol) {
-		Polinomio res(this->deg);
+		Polinomio res(this->deg > pol.deg ? this->deg : pol.deg);
 		for (int i = 0;i < deg;i++) {
-			res.coef[i] = this->coef[i] + pol.coef[i];
+			res.coef[i] += this->coef[i] + pol.coef[i];
 		}
 		return res;
 	}
 	Polinomio operator*(Polinomio &pol) {
-		Polinomio res(2 * this->deg);
-		for (int i = 0;i < deg;i++) {
-			for (int j = 0;j < deg;j++) {
+		int p1 = this->deg, p2 = pol.deg;
+		Polinomio res(p1 + p2);
+		res.print();
+		for (int i = 0;i < p1;i++) {
+			for (int j = 0;j < p2;j++) {
 				res.coef[i + j] += this->coef[i] * pol.coef[j];
 			}
 		}
+		res.print();
 		return res;
 	}
+	~Polinomio() {}
 };
 
 double* det(double ***M, int n) {
   if (n == 1) return M[0][0];
   return NULL;
 }
-
 
 int main() {
   int n;
@@ -50,9 +58,9 @@ int main() {
   for (int i = 0;i <= n;i++) {
   	cin >> p.coef[i];
   }
+	printf("p = ");
+	p.print();
   p = p * p;
-  for (int i = 0;i <= p.deg;i++) {
-  	cout << p.coef[i] << endl;
-  }
+  p.print();
   return 0;
 }
