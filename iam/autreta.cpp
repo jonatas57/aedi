@@ -76,27 +76,54 @@ Polinomio det(Polinomio **M, int n) {
   }
   return res;
 }
+double* getCoef(string s) {
+	int l = s.length();
+	int i;
+	for (i = 0;i < l && !isalpha(s[i]);i++);
+	double *aux = new double[2];
+	if (i == 0) {
+		aux[0] = 1.0;
+	}
+	if (i == l) {
+		aux[1] = 0.0;
+	}
+	else if (i == l - 1) {
+		aux[1] = 1.0;
+	}
+	else {
+		aux[0] = stod(s.substr(0, i), nullptr);
+		string e = s.substr(i + 2);
+		aux[1] = stod(e, nullptr);
+	}
+	return aux;
+}
 Polinomio stoP(string s) {
-	int d = 0;
-	if (isalnum(s[0])) d = 1;
-	for (int i = 0;s[i] != '\0';i++) {
-		if (s[i] == '-' || s[i] == '+') {
-			d++;
-		}
-		else if (s[i] == '^') {
-			string g = "";
-			g += s[i + 1];
-			d = max(d, stoi(g, nullptr, 10));
+	Polinomio p(1);
+	int f1 = 0, f2 = 0, last = 0;
+	while (1) {
+		f1 = s.find('+', last);
+		f2 = s.find('-', last);
+		int f = f1 < f2 && f1 != -1 ? f1 : f2;
+		if (f == -1) break;
+		else if (f != 0) {
+			string sub = s.substr(last, last - f);
+			double *aux = new double[2];
+			aux = getCoef(sub);
+			p.coef[(int)aux[1]] = aux[0];
+			last = f;
 		}
 	}
-	Polinomio p(d - 1);
 	return p;
 }
 
 int main() {
 	int n;
 	cin >> n;
-	
+	string s;
+	cin >> s;
+	Polinomio p = stoP(s);
+	p.print();
+	/*
   Polinomio **sec;
   sec = new Polinomio*[n];
   for (int i = 0;i < n;i++) {
@@ -106,5 +133,6 @@ int main() {
   		cin >> s;
   		sec[i][j] = stoP(s);
   	}
-  }
+  }*/
+	
 }
