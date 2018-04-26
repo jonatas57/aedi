@@ -18,8 +18,6 @@ public:
 		deg = a;
 		coef = (double *)calloc(a + 1, sizeof(double));
 	}
-<<<<<<< HEAD
-	~Polinomio() {}
 	void print() {
 		for (int i = 0;i <= deg;i++) {
  		 	printf(i == 0 ? "%.0f" : "%+.0f", coef[i]);
@@ -36,51 +34,27 @@ public:
 			int a = i <= this->deg ? this->coef[i] : 0;
 			int b = i <= pol.deg ? pol.coef[i] : 0;
 			res.coef[i] = a + b;
-=======
-	void print() {
-		for (int i = 0;i <= deg;i++) {
-			cout << coef[i] << ' ';
-		}
-		cout << endl;
-	}
-	Polinomio operator+(Polinomio &pol) {
-		Polinomio res(this->deg > pol.deg ? this->deg : pol.deg);
-		for (int i = 0;i < deg;i++) {
-			res.coef[i] += this->coef[i] + pol.coef[i];
->>>>>>> d10306740cc720c5e50af1312c7cccaabdc3418f
 		}
 		return res;
 	}
 	Polinomio operator*(Polinomio &pol) {
-<<<<<<< HEAD
 		int p1 = this->deg, p2 = pol.deg, p3 = p1 + p2;
 		Polinomio res(p3);
-		for (int i = 0;i <= p1;i++) {
-			for (int j = 0;j <= p2;j++) {
-=======
-		int p1 = this->deg, p2 = pol.deg;
-		Polinomio res(p1 + p2);
-		res.print();
 		for (int i = 0;i < p1;i++) {
 			for (int j = 0;j < p2;j++) {
->>>>>>> d10306740cc720c5e50af1312c7cccaabdc3418f
-				res.coef[i + j] += this->coef[i] * pol.coef[j];
+				res.coef[i + j] += this->coef[i]* pol.coef[j];
 			}
 		}
-		res.print();
 		return res;
 	}
-<<<<<<< HEAD
-  Polinomio operator*(double a) {
+	  Polinomio operator*(double a) {
   	Polinomio b(this->deg);
   	for (int i = 0;i < this->deg;i++) {
   		b.coef[i] = this->coef[i] * a;
   	}
   	return b;
   }
-=======
 	~Polinomio() {}
->>>>>>> d10306740cc720c5e50af1312c7cccaabdc3418f
 };
 
 Polinomio det(Polinomio **M, int n) {
@@ -102,9 +76,24 @@ Polinomio det(Polinomio **M, int n) {
   }
   return res;
 }
+Polinomio stoP(string s) {
+	int d = 0;
+	if (isalnum(s[0])) d = 1;
+	for (int i = 0;s[i] != '\0';i++) {
+		if (s[i] == '-' || s[i] == '+') {
+			d++;
+		}
+		else if (s[i] == '^') {
+			string g = "";
+			g += s[i + 1];
+			d = max(d, stoi(g, nullptr, 10));
+		}
+	}
+	Polinomio p(d - 1);
+	return p;
+}
 
 int main() {
-<<<<<<< HEAD
 	int n;
 	cin >> n;
 	
@@ -118,17 +107,4 @@ int main() {
   		sec[i][j] = stoP(s);
   	}
   }
-=======
-  int n;
-  cin >> n;
-  Polinomio p(n);
-  for (int i = 0;i <= n;i++) {
-  	cin >> p.coef[i];
-  }
-	printf("p = ");
-	p.print();
-  p = p * p;
-  p.print();
->>>>>>> d10306740cc720c5e50af1312c7cccaabdc3418f
-  return 0;
 }
