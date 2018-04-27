@@ -58,13 +58,27 @@ public:
 		return res;
 	}
 };
-int getMono(string s, string **ss) {
-
+string* getMono(string s, int l) {
+	string *m = new string[l];
+	int i = 0, last = 0, c = 0;
+	do {
+		i++;
+		if (s[i] == '+' || s[i] == '-' || s[i] == '\0') {
+			m[c] = s.substr(last, i - last);
+			c++;
+			last = i;
+		}
+	} while (s[i] != '\0');
+	return m;
 }
-polinomio stop(string s) {
-	string ss = getMono(s);
-	double *aux = getNum(ss);
-	int l = sizeof(s) / sizeof(double);
+double* getNum(string *s, int l) {
+	
+	double *num = NULL;
+	return num;
+}
+polinomio stop(string s, int l) {
+	string *ss = getMono(s, l);
+	double *aux = getNum(ss, l);
 	polinomio p(l - 1);
 	p.ler(aux);
 	return p;
@@ -73,12 +87,13 @@ polinomio stop(string s) {
 int main() {
 	string s, t, *ss;
 	cin >> s;
-	ss = new string[getMono(s)];
-	/*polinomio p = stop(s);
-	p.print();
-	p = p * 2;
-	p.print();
-	p = p + p;
-	p.print();*/
+	int l = 1;
+	for (int i = 1;s[i] != '\0';i++) {
+		if (s[i] == '+' || s[i] == '-') l++;
+	}
+	ss = getMono(s, l);
+	for (int i = 0;i < l;i++) cout << ss[i] << endl;
+	
+	//polinomio p = stop(s, l);
 	return 0;
 }
