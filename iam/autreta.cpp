@@ -1,4 +1,7 @@
 #include <iostream>
+#include <cstdlib>
+#include <cstdio>
+#include <string>
 
 using namespace std;
 
@@ -18,7 +21,7 @@ public:
 	}
 	void ler(double *aux) {
 		for (int i = 0;i <= grau;i++) {
-			coef[i] = aux[i];
+			coef[i] += aux[i];
 		}
 	}
 	void print() {
@@ -55,33 +58,27 @@ public:
 		return res;
 	}
 };
-string* getMono(string s) {
-	string *t;
-	int g = 0, fp = 0, fm = 0, last = 0;
-	while (true) {
-		fp = s.find('+', last);
-		fm = s.find('-', last);
-		f = f1 == -1 ? f2 : (f2 == -1 ? f1 : (f1 <= f2 ? f1 : f2);
-	}
-	return t;
+int getMono(string s, string **ss) {
+
 }
 polinomio stop(string s) {
-	string *ss = getMono(s);
+	string ss = getMono(s);
 	double *aux = getNum(ss);
-	int l = sizeof(aux) / sizeof(double);
+	int l = sizeof(s) / sizeof(double);
 	polinomio p(l - 1);
 	p.ler(aux);
 	return p;
 }
 
 int main() {
-	string s;
+	string s, t, *ss;
 	cin >> s;
-	polinomio p = stop(s);
+	ss = new string[getMono(s)];
+	/*polinomio p = stop(s);
 	p.print();
 	p = p * 2;
 	p.print();
 	p = p + p;
-	p.print();
+	p.print();*/
 	return 0;
 }
