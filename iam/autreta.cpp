@@ -19,8 +19,8 @@ public:
 		coef = (double *)calloc(a + 1, sizeof(double));
 	}
 	void print() {
-		for (int i = 0;i <= deg;i++) {
- 		 	printf(i == 0 ? "%.0f" : "%+.0f", coef[i]);
+		for (int i = deg;i >= 0;i--) {
+ 		 	printf(i == deg ? "%.0f" : "%+.0f", coef[i]);
  		 	if (i >= 1) cout << "x";
  		 	if (i > 1) printf("^%d", i);
 	  }
@@ -98,41 +98,32 @@ double* getCoef(string s) {
 	return aux;
 }
 Polinomio stoP(string s) {
-	Polinomio p(1);
+	Polinomio p(3);
 	int f1 = 0, f2 = 0, last = 0;
 	while (1) {
 		f1 = s.find('+', last);
 		f2 = s.find('-', last);
-		int f = f1 < f2 && f1 != -1 ? f1 : f2;
+		cout << f1<<' ' << f2<<endl;
+		int f = f1 == -1 ? f2 : (f2 == -1 ? f1 : (f1 < f2 ? f1 : f2));
+		cout << f << endl;
 		if (f == -1) break;
 		else if (f != 0) {
+			cout << "viva" << endl;
 			string sub = s.substr(last, last - f);
 			double *aux = new double[2];
 			aux = getCoef(sub);
 			p.coef[(int)aux[1]] = aux[0];
 			last = f;
+cout << last << endl;
 		}
 	}
 	return p;
 }
 
 int main() {
-	int n;
-	cin >> n;
 	string s;
 	cin >> s;
 	Polinomio p = stoP(s);
 	p.print();
-	/*
-  Polinomio **sec;
-  sec = new Polinomio*[n];
-  for (int i = 0;i < n;i++) {
-  	sec[i] = (Polinomio *)malloc(n * sizeof(Polinomio));
-  	for (int j = 0;j < n;j++) {
-  		string s;
-  		cin >> s;
-  		sec[i][j] = stoP(s);
-  	}
-  }*/
-	
+	return 0;
 }
