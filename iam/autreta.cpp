@@ -30,38 +30,47 @@ public:
 			coef[i] += aux[i];
 		}
 	}
-	void print() {
-		bool p = false;
-		for (int i = grau;i >= 0;i--) {
-			string m = "";
-			if (coef[i] != 0) {
-				if ((coef[i] > 0 && i < grau) && p) {
-					cout << "+";
-				}
-				if (coef[i] != 1 || i == 0) {
-					if (coef[i] == -1) {
-						m += "-";
+	void print(int a) {
+		if (a == 1) {
+			bool p = false;
+			for (int i = grau;i >= 0;i--) {
+				string m = "";
+				if (coef[i] > 1.0e-10 || coef[i] < -1.0e-10) {
+					if ((coef[i] > 0 && i < grau) && p) {
+						cout << "+";
 					}
-					else {
-						char *aux = new char[30];
-						sprintf(aux, "%.0f", coef[i]);
-						m += aux;
+					if (coef[i] != 1 || i == 0) {
+						if (coef[i] == -1 && i != 0) {
+							m += "-";
+						}
+						else {
+							char *aux = new char[30];
+							sprintf(aux, "%.0f", coef[i]);
+							m += aux;
+						}
+					}
+					if (i >= 1) {
+						m += "x";
+					}
+					if (i > 1) {
+						m += "^";
+						m += to_string(i);
 					}
 				}
-				if (i >= 1) {
-					m += "x";
-				}
-				if (i > 1) {
-					m += "^";
-					m += to_string(i);
-				}
+				cout << m;
+				if (m != "") p = true;
 			}
-			cout << m;
-			if (m != "") p = true;
+			if (!p) cout << 0;
+			cout << endl;
 		}
-		cout << endl;
+		else {
+			for (int i = grau;i >= 0;i--) {
+				printf("%.0f ", coef[i]);
+			}
+			cout << endl;
+		}
 	}
-	polinomio operator*(polinomio &pol) {
+	polinomio operator*(polinomio& pol) {
 		int g1 = this->grau, g2 = pol.grau;
 		polinomio res(g1 + g2);
 		for (int i = 0;i <= g1;i++) {
@@ -81,9 +90,10 @@ public:
 	polinomio operator*(int a) {
 		return *this * (double)a;
 	}
-	polinomio operator+(polinomio &pol) {
-		polinomio res(this->grau);
-		for (int i = 0;i <= grau;i++) {
+	polinomio operator+(polinomio& pol) {
+		int g = this->grau > pol.grau ? this->grau : pol.grau;
+		polinomio res(g);
+		for (int i = 0;i <= g;i++) {
 			res.coef[i] = this->coef[i] + pol.coef[i];
 		}
 		return res;
@@ -150,16 +160,44 @@ polinomio stop(string s, int l) {
 	return p;
 }
 
+polinomio detMat(polinomio **M, int n) {
+	if (n == 1) return M[0][0];
+	polinomio d = 0;
+	for (int i = 0;i < n;i++) {
+		polinomio **N = new polinomio*[n - 1];
+		for (int j = 0;j < n - 1;j++) {
+			N[j] = (polinomio*)malloc((n - 1) * sizeof(polinomio));
+			for (int k = 0;k < n - 1;k++) {
+				N[j][k] = M[j + 1][k >= i ? k + 1 : k];
+			}
+		}
+		polinomio det = detMat(N, n - 1) * (i % 2 == 0 ? 1 : -1);
+		polinomio aux = M[0][i] * det;
+		d = d + aux;
+	}
+	return d;
+}
+
 int main() {
-	string s;
-	cin >> s;
-	int l = 1;
-	for (int i = 1;s[i] != '\0';i++) {
-		if (s[i] == '+' || s[i] == '-') {
-			l++;
+	int n;
+	cin >> n;
+	polinomio **p;
+	p = (polinomio**)malloc(n * sizeof(polinomio*));
+	for (int i = 0;i < n;i++) {
+		p[i] = (polinomio*)malloc(n * sizeof(polinomio));
+		for (int j = 0;j < n;j++) {
+			string s;
+			cin >> s;
+			int l = 1;
+			for (int i = 1;s[i] != '\0';i++) {
+				if (s[i] == '+' || s[i] == '-') {
+					l++;
+				}
+			}
+			p[i][j] = stop(s, l);
 		}
 	}
-	polinomio p = stop(s, l);
-	p.print();
+	polinomio d = detMat(p, n);
+	d.print(1);
 	return 0;
 }
