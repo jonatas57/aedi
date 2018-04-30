@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <math.h>
 
 using namespace std;
 
@@ -67,6 +68,39 @@ public:
 			printf("%.0f ", coef[i]);
 		}
 		cout << endl;
+	}
+	void reduzir() {
+		int i;
+		for (i = grau;i >= 0 && coef[i] == 0;i--);
+		if (i != grau) {
+			polinomio *q = this;
+			polinomio r(i);
+			for (int j = i;j >= 0;j--){
+				r.coef[j] = q->coef[j];
+			}
+			*this = r;
+			free(q);
+		}
+	}
+	void raizes() {
+		if (grau > 2) {
+			cout << "EM BREVE" << endl;
+		}
+		else {
+			if (grau == 2) {
+				double x, y;
+				double a = coef[2], b = coef[1], c = coef[0];
+				x = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
+				y = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
+				printf("x\' = %.2f\nx\" = %.2f\n", x, y);
+			}
+			else if (grau == 1) {
+				printf("x = %.2f\n", -coef[0]/coef[1]);
+			}
+			else {
+				cout << "IMPOSSIVEL" << endl;
+			}
+		}
 	}
 	polinomio operator*(polinomio& pol) {
 		int g1 = this->grau, g2 = pol.grau;
@@ -179,25 +213,15 @@ polinomio detMat(polinomio **M, int n) {
 }
 
 int main() {
-	int n;
-	cin >> n;
-	polinomio **p;
-	p = (polinomio**)malloc(n * sizeof(polinomio*));
-	for (int i = 0;i < n;i++) {
-		p[i] = (polinomio*)malloc(n * sizeof(polinomio));
-		for (int j = 0;j < n;j++) {
-			string s;
-			cin >> s;
-			int l = 1;
-			for (int i = 1;s[i] != '\0';i++) {
-				if (s[i] == '+' || s[i] == '-') {
-					l++;
-				}
-			}
-			p[i][j] = stop(s, l);
+	string s;
+	cin >> s;
+	int l = 1;
+	for (int i = 1;s[i] != '\0';i++) {
+		if (s[i] == '+' || s[i] == '-') {
+			l++;
 		}
 	}
-	polinomio d = detMat(p, n);
-	d.print();
+	polinomio p = stop(s, l);
+	p.raizes();
 	return 0;
 }
