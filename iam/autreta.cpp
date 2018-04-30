@@ -92,7 +92,9 @@ public:
 		int g = this->grau > pol.grau ? this->grau : pol.grau;
 		polinomio res(g);
 		for (int i = 0;i <= g;i++) {
-			res.coef[i] = this->coef[i] + pol.coef[i];
+			double a = i > this->grau ? 0 : this->coef[i];
+			double b = i > pol.grau ? 0 : pol.coef[i];
+			res.coef[i] = a + b;
 		}
 		return res;
 	}
@@ -171,12 +173,8 @@ polinomio detMat(polinomio **M, int n) {
 		}
 		polinomio det = detMat(N, n - 1) * (i % 2 == 0 ? 1 : -1);
 		polinomio aux = M[0][i] * det;
-		// printf("--det = ");det.print();
-		// printf("--aux = ");aux.print();
 		d = d + aux;
 	}
-	printf("Determinante %dx%d\n", n, n);
-	d.sprint();
 	return d;
 }
 
