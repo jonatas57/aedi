@@ -30,45 +30,43 @@ public:
 			coef[i] += aux[i];
 		}
 	}
-	void print(int a) {
-		if (a == 1) {
-			bool p = false;
-			for (int i = grau;i >= 0;i--) {
-				string m = "";
-				if (coef[i] > 1.0e-10 || coef[i] < -1.0e-10) {
-					if ((coef[i] > 0 && i < grau) && p) {
-						cout << "+";
+	void print() {
+		bool p = false;
+		for (int i = grau;i >= 0;i--) {
+			string m = "";
+			if (coef[i] > 1.0e-10 || coef[i] < -1.0e-10) {
+				if ((coef[i] > 0 && i < grau) && p) {
+					cout << "+";
+				}
+				if (coef[i] != 1 || i == 0) {
+					if (coef[i] == -1 && i != 0) {
+						m += "-";
 					}
-					if (coef[i] != 1 || i == 0) {
-						if (coef[i] == -1 && i != 0) {
-							m += "-";
-						}
-						else {
-							char *aux = new char[30];
-							sprintf(aux, "%.0f", coef[i]);
-							m += aux;
-						}
-					}
-					if (i >= 1) {
-						m += "x";
-					}
-					if (i > 1) {
-						m += "^";
-						m += to_string(i);
+					else {
+						char *aux = new char[30];
+						sprintf(aux, "%.0f", coef[i]);
+						m += aux;
 					}
 				}
-				cout << m;
-				if (m != "") p = true;
+				if (i >= 1) {
+					m += "x";
+				}
+				if (i > 1) {
+					m += "^";
+					m += to_string(i);
+				}
 			}
-			if (!p) cout << 0;
-			cout << endl;
+			cout << m;
+			if (m != "") p = true;
 		}
-		else {
-			for (int i = grau;i >= 0;i--) {
-				printf("%.0f ", coef[i]);
-			}
-			cout << endl;
+		if (!p) cout << 0;
+		cout << endl;
+	}
+	void sprint() {
+		for (int i = grau;i >= 0;i--) {
+			printf("%.0f ", coef[i]);
 		}
+		cout << endl;
 	}
 	polinomio operator*(polinomio& pol) {
 		int g1 = this->grau, g2 = pol.grau;
@@ -162,7 +160,7 @@ polinomio stop(string s, int l) {
 
 polinomio detMat(polinomio **M, int n) {
 	if (n == 1) return M[0][0];
-	polinomio d = 0;
+	polinomio d(0);
 	for (int i = 0;i < n;i++) {
 		polinomio **N = new polinomio*[n - 1];
 		for (int j = 0;j < n - 1;j++) {
@@ -173,8 +171,12 @@ polinomio detMat(polinomio **M, int n) {
 		}
 		polinomio det = detMat(N, n - 1) * (i % 2 == 0 ? 1 : -1);
 		polinomio aux = M[0][i] * det;
+		// printf("--det = ");det.print();
+		// printf("--aux = ");aux.print();
 		d = d + aux;
 	}
+	printf("Determinante %dx%d\n", n, n);
+	d.sprint();
 	return d;
 }
 
@@ -198,6 +200,6 @@ int main() {
 		}
 	}
 	polinomio d = detMat(p, n);
-	d.print(1);
+	d.print();
 	return 0;
 }
