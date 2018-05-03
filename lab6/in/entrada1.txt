@@ -1,0 +1,12 @@
+I 10 ABC 10
+I 18 DEF 2
+I 15 GHI 6
+I 60 JKL 5
+B 15
+B 16
+M
+O 1 1
+B 18
+O 2 1
+B 10
+P
