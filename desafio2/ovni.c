@@ -23,6 +23,7 @@ void test(linkNode *t) {
 		printf("%p = %p <- (%p) -> %p\n", t, t->prev, t->data, t->next);
 	}
 }
+
 linkNode* newNode(char *m, int v, double k, int c, int p) {
 	linkNode *x = malloc(sizeof(linkNode));
 	ovni *o = malloc(sizeof(ovni));
@@ -66,11 +67,10 @@ int compare(ovni *a, ovni *b, int m, int o) {
 		comp = a->cap > b->cap ? 1 : -1;
 	}
 	else if (m == 5) {
-		if (a->pra > b->pra) comp = 1;
-		else if (a->pra < b->pra) comp = -1;
+		if (a->vel > b->vel) comp = -1;
+		else if (a->vel < b->vel) comp = 1;
 		else {
-			comp = (a->ef > b->ef ? 1 : -1);
-			comp *= (o ? 1 : -1);
+			comp = (a->ef > b->ef ? 1 : -1) * (o ? 1 : -1);
 		}
 		return comp;
 	}
@@ -80,9 +80,9 @@ int compare(ovni *a, ovni *b, int m, int o) {
 	return comp * (o ? -1 : 1);
 }
 void swap(ovni *a, ovni *b) {
-	ovni *tmp = a;
-	a = b;
-	b = tmp;
+	ovni tmp = *a;
+	*a = *b;
+	*b = tmp;
 }
 void quicksort(linkNode *list, linkNode *last, int m, int ord) {
 	if (list == NULL || list == last || last == NULL || list == last->next) return;
@@ -93,8 +93,6 @@ void quicksort(linkNode *list, linkNode *last, int m, int ord) {
 			swap(aux->data, tmp->data);
 		}
 	}
-	printf("quick\n");
-	printList(list);
 	swap(pivo->data, aux->data);
 	quicksort(list, aux->prev, m, ord);
 	quicksort(aux->next, last, m, ord);
